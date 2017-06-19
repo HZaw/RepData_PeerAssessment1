@@ -2,7 +2,6 @@ Title My Reproducible Research Project1
 
 ```{r}
 library(ggplot2)
-library(data.table)
 library(Hmisc)
 ```
 What is mean total number of steps taken per day?
