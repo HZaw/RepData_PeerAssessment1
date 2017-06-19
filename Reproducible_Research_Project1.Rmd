@@ -2,13 +2,8 @@ Title My Reproducible Research Project1
 
 ```{r}
 library(ggplot2)
-library(data.table)
-library(Hmisc)
 ```
 What is mean total number of steps taken per day?
-
-Preprocessing Data
-
 1. load the data (ie. read.csv())
 ```{r}
 Data <- read.csv("activity.csv")
@@ -21,13 +16,10 @@ Tsteps <- aggregate(steps ~ date, Data1, sum)
 names(Tsteps)[1] <- "Date"
 names(Tsteps)[2] <- "Totalsteps"
 ```
+
 3. Make a histogram of the total of steps taken per day
-```{r}
-hist(Tsteps$Totalsteps,
-     col="red",
-     main="Histogram of the total number of steps per day",
-     xlab="The total number of steps per day",
-     breaks =10)
+```{r, out.width="300px"}
+qplot(Tsteps$Totalsteps, xlab='Total steps per day', ylab='Frequency using binwith 500', binwidth=300)
 ```
 4. Calculate and report the mean and median number of steps per day
 ```{r}
@@ -35,9 +27,8 @@ mean(Tsteps$Totalsteps)
 median(Tsteps$Totalsteps)
 ```
 What is the average daily activity pattern
-
 1. Make a time series plot of 5-min interval and the average number of steps taken, averaged across all days
-```{r}
+```{r, out.width="300px"}
 Data2 <- Data[complete.cases(Data),]
 MData1 <- aggregate(Data2$steps, by=list(Data2$interval), mean)
 names(MData1)[1] <- "interval"
@@ -82,14 +73,13 @@ sum(is.na(NewData1$steps))
 ```
 
 4. Make a histogram of the total number of steps taken per day and calculate and report the mean and median total number of steps taken per day.
-```{r}
+```{r, out.width="300px"}
 SumDataByDay <- aggregate(NewData1$steps, by=list(NewData1$date), sum)
 names(SumDataByDay)[1]="date"
 names(SumDataByDay)[2]="totalsteps"
-head(SumDataByDay,20)
 # Plot using ggplot
 ggplot(SumDataByDay, aes(x=totalsteps))+
-        geom_histogram(fill="maroon",binwidth=1000)+
+        geom_histogram(fill="maroon",binwidth=300)+
         labs(title="Total Daily Steps", x="Steps", y="Frequency")
 # Mean on New Data
 mean(SumDataByDay$totalsteps)
@@ -100,16 +90,14 @@ median(SumDataByDay$totalsteps)
 Yes, they are same with original.
 
 Are there differences in activity patterns between weekdays and weekends?
-```{r}
+```{r, out.width="300px"}
 NewData1$weekday <- weekdays(as.Date.character(NewData1$date))
 NewData1$weekend <- ifelse(NewData1$weekday=="Saturday"| NewData1$weekday=="Sunday","Weekend","Weekday")
 head(NewData1,5)
-
 MeanWEWD <- aggregate(NewData1$steps, by=list(NewData1$weekend, NewData1$interval), mean)
 names(MeanWEWD)[1]="weekend"
 names(MeanWEWD)[2]="interval"
 names(MeanWEWD)[3]="steps"
-
 ggplot(MeanWEWD, aes(x=interval, y=steps, color=weekend))+
         geom_line()+
         facet_grid(weekend ~.)+
